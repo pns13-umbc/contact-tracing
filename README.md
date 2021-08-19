@@ -21,3 +21,4 @@ Queries.ppt - A power point presentation containing 5 sample queries and the res
   -Query 2 is associated with public health data and grocery store data
   -Query 3 is associated with public health data and school data
   -Queries 4 & 5 are associated with public health data and movie data
+ Query Reasoning.ppt - A power point presentation providing information about what each query's situation aware access control is
