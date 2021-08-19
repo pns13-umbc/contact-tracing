@@ -1,0 +1,1741 @@
+@prefix : <http://www.semanticweb.org/pnora/ontologies/2021/6/7-2-fresh#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ContactTracingOntology: <http://www.semanticweb.org/ContactTracingOntology#> .
+@prefix pns13ContactTracingOntology: <http://www.semanticweb.org/pns13ContactTracingOntology#> .
+@base <http://www.semanticweb.org/ContactTracingOntology> .
+
+<http://www.semanticweb.org/ContactTracingOntology> rdf:type owl:Ontology .
+
+#################################################################
+#    Datatypes
+#################################################################
+
+###  http://www.w3.org/2001/XMLSchema#dateTime
+xsd:dateTime rdfs:comment "So, the date property has been eliminated, and most people suggest when using datetime to just get at a date use midnight in universal time. Ex: 2001-10-12T00:00:00Z" .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.semanticweb.org/ContactTracingOntology#allowAccess
+ContactTracingOntology:allowAccess rdf:type owl:ObjectProperty ;
+                                   rdfs:domain [ rdf:type owl:Class ;
+                                                 owl:unionOf ( ContactTracingOntology:Organization
+                                                               ContactTracingOntology:Place
+                                                             )
+                                               ] ;
+                                   rdfs:range [ rdf:type owl:Class ;
+                                                owl:unionOf ( ContactTracingOntology:Data
+                                                              ContactTracingOntology:Visit
+                                                              owl:Thing
+                                                            )
+                                              ] ;
+                                   rdfs:comment "The records that the Organization is willing to allow automatic access to" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#assigned
+ContactTracingOntology:assigned rdf:type owl:ObjectProperty ;
+                                rdfs:domain ContactTracingOntology:User ;
+                                rdfs:range [ rdf:type owl:Class ;
+                                             owl:unionOf ( ContactTracingOntology:Organization
+                                                           ContactTracingOntology:Person
+                                                           ContactTracingOntology:Place
+                                                           ContactTracingOntology:Visit
+                                                         )
+                                           ] ,
+                                           [ rdf:type owl:Class ;
+                                             owl:unionOf ( ContactTracingOntology:Organization
+                                                           ContactTracingOntology:Place
+                                                           ContactTracingOntology:Visit
+                                                           [ rdf:type owl:Restriction ;
+                                                             owl:onProperty ContactTracingOntology:isCaseFor ;
+                                                             owl:someValuesFrom ContactTracingOntology:Disease
+                                                           ]
+                                                           [ rdf:type owl:Restriction ;
+                                                             owl:onProperty ContactTracingOntology:isContactFor ;
+                                                             owl:someValuesFrom ContactTracingOntology:Disease
+                                                           ]
+                                                         )
+                                           ] .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#belongsTo
+ContactTracingOntology:belongsTo rdf:type owl:ObjectProperty ,
+                                          owl:TransitiveProperty ;
+                                 rdfs:domain [ rdf:type owl:Class ;
+                                               owl:unionOf ( ContactTracingOntology:Organization
+                                                             ContactTracingOntology:Place
+                                                             ContactTracingOntology:Transportation
+                                                           )
+                                             ] ;
+                                 rdfs:range [ rdf:type owl:Class ;
+                                              owl:unionOf ( ContactTracingOntology:Organization
+                                                            ContactTracingOntology:Person
+                                                            ContactTracingOntology:Place
+                                                          )
+                                            ] .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#canAccess
+ContactTracingOntology:canAccess rdf:type owl:ObjectProperty ;
+                                 rdfs:domain ContactTracingOntology:User ;
+                                 rdfs:range [ rdf:type owl:Class ;
+                                              owl:unionOf ( ContactTracingOntology:Data
+                                                            ContactTracingOntology:Visit
+                                                            owl:Thing
+                                                          )
+                                            ] ;
+                                 rdfs:comment "So, the owner of organization data can allow users with specific roles access to their records (provided they have a good reason - this isn't willy-nilly access records, but for accessing records directly relevant to contact tracing a specific case)." .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#causes
+ContactTracingOntology:causes rdf:type owl:ObjectProperty ;
+                              rdfs:domain ContactTracingOntology:Disease ;
+                              rdfs:range ContactTracingOntology:Symptom .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#coordinator
+ContactTracingOntology:coordinator rdf:type owl:ObjectProperty ;
+                                   rdfs:subPropertyOf ContactTracingOntology:visitProperty ;
+                                   rdfs:domain ContactTracingOntology:Visit ;
+                                   rdfs:range [ rdf:type owl:Class ;
+                                                owl:unionOf ( ContactTracingOntology:Organization
+                                                              ContactTracingOntology:Person
+                                                              ContactTracingOntology:Place
+                                                            )
+                                              ] ;
+                                   rdfs:comment "Not original platys property" ,
+                                                """Whoever organized a visit, and the entity you should contact first to get information about contacts.
+
+Especially useful in cases like conferences, where the organizer may not own the space or be physically present at the event.""" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#dataType
+ContactTracingOntology:dataType rdf:type owl:ObjectProperty ,
+                                         owl:TransitiveProperty ;
+                                rdfs:domain [ rdf:type owl:Class ;
+                                              owl:unionOf ( ContactTracingOntology:Data
+                                                            ContactTracingOntology:Data_Type
+                                                          )
+                                            ] ;
+                                rdfs:range ContactTracingOntology:Data_Type .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#diseaseExposure
+ContactTracingOntology:diseaseExposure rdf:type owl:ObjectProperty ;
+                                       rdfs:subPropertyOf ContactTracingOntology:visitProperty ;
+                                       rdfs:domain ContactTracingOntology:Visit ;
+                                       rdfs:range ContactTracingOntology:Disease .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#endAt
+ContactTracingOntology:endAt rdf:type owl:ObjectProperty ;
+                             rdfs:domain ContactTracingOntology:Transportation ;
+                             rdfs:range ContactTracingOntology:Location .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasAddress
+ContactTracingOntology:hasAddress rdf:type owl:ObjectProperty ;
+                                  rdfs:subPropertyOf ContactTracingOntology:hasLocation ;
+                                  rdfs:domain ContactTracingOntology:Place ;
+                                  rdfs:range ContactTracingOntology:Address ;
+                                  rdfs:comment "Not original Platys property -- maps a Place to an address" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasAmbiance
+ContactTracingOntology:hasAmbiance rdf:type owl:ObjectProperty ;
+                                   rdfs:subPropertyOf ContactTracingOntology:placeProperty ;
+                                   rdfs:domain [ rdf:type owl:Class ;
+                                                 owl:unionOf ( ContactTracingOntology:Place
+                                                               ContactTracingOntology:Place_Type
+                                                               ContactTracingOntology:Transportation
+                                                               ContactTracingOntology:Transportation_Type
+                                                             )
+                                               ] ;
+                                   rdfs:range ContactTracingOntology:Ambiance .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasAvailability
+ContactTracingOntology:hasAvailability rdf:type owl:ObjectProperty ;
+                                       rdfs:subPropertyOf ContactTracingOntology:personalInformation ;
+                                       rdfs:range ContactTracingOntology:Availability .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasComorbidity
+ContactTracingOntology:hasComorbidity rdf:type owl:ObjectProperty ;
+                                      rdfs:subPropertyOf ContactTracingOntology:personalInformation ;
+                                      rdfs:domain ContactTracingOntology:Person ;
+                                      rdfs:range ContactTracingOntology:Comorbidity .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasContactInformation
+ContactTracingOntology:hasContactInformation rdf:type owl:ObjectProperty ;
+                                             rdfs:subPropertyOf ContactTracingOntology:personalInformation ,
+                                                                owl:topObjectProperty ;
+                                             rdfs:domain [ rdf:type owl:Class ;
+                                                           owl:unionOf ( ContactTracingOntology:Organization
+                                                                         ContactTracingOntology:Person
+                                                                         ContactTracingOntology:Place
+                                                                         ContactTracingOntology:User
+                                                                       )
+                                                         ] ;
+                                             rdfs:range ContactTracingOntology:Contact_Information .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasDemographic
+ContactTracingOntology:hasDemographic rdf:type owl:ObjectProperty ;
+                                      rdfs:subPropertyOf ContactTracingOntology:personalInformation ;
+                                      rdfs:domain ContactTracingOntology:Person ;
+                                      rdfs:range ContactTracingOntology:Demographic .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasDomain
+ContactTracingOntology:hasDomain rdf:type owl:ObjectProperty ;
+                                 rdfs:domain ContactTracingOntology:Regulation ;
+                                 rdfs:range [ rdf:type owl:Class ;
+                                              owl:unionOf ( ContactTracingOntology:Organization
+                                                            ContactTracingOntology:Place
+                                                            ContactTracingOntology:User
+                                                          )
+                                            ] ;
+                                 rdfs:comment "Regulations only apply over a specific region, and they apply to a specific thing. In order for a regulation to be applied, it needs to be applied to an overlap of the right place in the right location." .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasEmail
+ContactTracingOntology:hasEmail rdf:type owl:ObjectProperty ;
+                                rdfs:subPropertyOf ContactTracingOntology:hasContactInformation ;
+                                rdfs:range ContactTracingOntology:Email .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasEmergencyContact
+ContactTracingOntology:hasEmergencyContact rdf:type owl:ObjectProperty ;
+                                           rdfs:domain ContactTracingOntology:Person ;
+                                           rdfs:range ContactTracingOntology:Person .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasEmployer
+ContactTracingOntology:hasEmployer rdf:type owl:ObjectProperty ;
+                                   rdfs:domain ContactTracingOntology:Job ;
+                                   rdfs:range [ rdf:type owl:Class ;
+                                                owl:unionOf ( ContactTracingOntology:Organization
+                                                              ContactTracingOntology:Person
+                                                              ContactTracingOntology:Place
+                                                            )
+                                              ] ;
+                                   rdfs:comment "Remember, Job is specific, and should be specific to each individual job." .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasEthnicity
+ContactTracingOntology:hasEthnicity rdf:type owl:ObjectProperty ;
+                                    rdfs:subPropertyOf ContactTracingOntology:hasDemographic ;
+                                    rdfs:range ContactTracingOntology:Ethnicity .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasGender
+ContactTracingOntology:hasGender rdf:type owl:ObjectProperty ;
+                                 rdfs:subPropertyOf ContactTracingOntology:hasDemographic ;
+                                 rdfs:range ContactTracingOntology:Gender .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasHouseholdMember
+ContactTracingOntology:hasHouseholdMember rdf:type owl:ObjectProperty ;
+                                          rdfs:domain ContactTracingOntology:Person ;
+                                          rdfs:range ContactTracingOntology:Person .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasJob
+ContactTracingOntology:hasJob rdf:type owl:ObjectProperty ;
+                              rdfs:subPropertyOf ContactTracingOntology:personalInformation ;
+                              rdfs:domain ContactTracingOntology:Person ;
+                              rdfs:range ContactTracingOntology:Job .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasLocation
+ContactTracingOntology:hasLocation rdf:type owl:ObjectProperty ;
+                                   rdfs:subPropertyOf ContactTracingOntology:placeProperty ;
+                                   owl:inverseOf ContactTracingOntology:mapsTo ;
+                                   rdfs:domain ContactTracingOntology:Place ;
+                                   rdfs:range ContactTracingOntology:Location ;
+                                   rdfs:comment "They have this one with Range \"Place,\" which doesn't really help our application, so I'm including an alteration." .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasPhoneNumber
+ContactTracingOntology:hasPhoneNumber rdf:type owl:ObjectProperty ;
+                                      rdfs:subPropertyOf ContactTracingOntology:hasContactInformation ;
+                                      rdfs:range ContactTracingOntology:Phone_Number .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasProxy
+ContactTracingOntology:hasProxy rdf:type owl:ObjectProperty ;
+                                rdfs:domain ContactTracingOntology:Person ;
+                                rdfs:range [ rdf:type owl:Class ;
+                                             owl:unionOf ( ContactTracingOntology:Organization
+                                                           ContactTracingOntology:Person
+                                                           ContactTracingOntology:Place
+                                                         )
+                                           ] ;
+                                rdfs:comment "Who represents this person? (Ex: A minor represented by a parent. You can also be represented by yourself.)" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasRace
+ContactTracingOntology:hasRace rdf:type owl:ObjectProperty ;
+                               rdfs:subPropertyOf ContactTracingOntology:hasDemographic ;
+                               rdfs:range ContactTracingOntology:Race .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasRole
+ContactTracingOntology:hasRole rdf:type owl:ObjectProperty ;
+                               rdfs:domain ContactTracingOntology:User ;
+                               rdfs:range ContactTracingOntology:Role .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasSymptom
+ContactTracingOntology:hasSymptom rdf:type owl:ObjectProperty ;
+                                  rdfs:subPropertyOf ContactTracingOntology:personalInformation ;
+                                  rdfs:domain ContactTracingOntology:Person ;
+                                  rdfs:range ContactTracingOntology:Symptom .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasTribalAffiliation
+ContactTracingOntology:hasTribalAffiliation rdf:type owl:ObjectProperty ;
+                                            rdfs:subPropertyOf ContactTracingOntology:hasDemographic ;
+                                            rdfs:range ContactTracingOntology:Tribal_Affiliation .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#in
+ContactTracingOntology:in rdf:type owl:ObjectProperty ;
+                          rdfs:subPropertyOf ContactTracingOntology:placeProperty ;
+                          rdf:type owl:TransitiveProperty ;
+                          rdfs:domain ContactTracingOntology:Location ;
+                          rdfs:range ContactTracingOntology:Location ;
+                          rdfs:comment "To map to city/state/country to the right spot. Can also map to a position" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#isCaseFor
+ContactTracingOntology:isCaseFor rdf:type owl:ObjectProperty ;
+                                 rdfs:domain ContactTracingOntology:Person ;
+                                 rdfs:range ContactTracingOntology:Disease .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#isContactFor
+ContactTracingOntology:isContactFor rdf:type owl:ObjectProperty ;
+                                    rdfs:domain ContactTracingOntology:Person ;
+                                    rdfs:range ContactTracingOntology:Disease .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#isProbableCaseFor
+ContactTracingOntology:isProbableCaseFor rdf:type owl:ObjectProperty ;
+                                         rdfs:domain ContactTracingOntology:Person ;
+                                         rdfs:range ContactTracingOntology:Disease ;
+                                         rdfs:comment "For contacts who have developed symptoms or for some other reason are suspected of being active cases but have not been tested" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#jobType
+ContactTracingOntology:jobType rdf:type owl:ObjectProperty ,
+                                        owl:TransitiveProperty ;
+                               rdfs:domain [ rdf:type owl:Class ;
+                                             owl:unionOf ( ContactTracingOntology:Job
+                                                           ContactTracingOntology:Job_Type
+                                                         )
+                                           ] ;
+                               rdfs:range ContactTracingOntology:Job_Type ;
+                               rdfs:comment "Can have more than one" ,
+                                            "Can nest job types (ex. Customer Service to Cashier)" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#livesAt
+ContactTracingOntology:livesAt rdf:type owl:ObjectProperty ;
+                               rdfs:subPropertyOf ContactTracingOntology:placeProperty ;
+                               rdfs:domain ContactTracingOntology:Person ;
+                               rdfs:range ContactTracingOntology:Place ;
+                               rdfs:comment "Not originally Platys property" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#mapsTo
+ContactTracingOntology:mapsTo rdf:type owl:ObjectProperty ;
+                              rdfs:subPropertyOf ContactTracingOntology:placeProperty ;
+                              rdfs:domain ContactTracingOntology:Location ;
+                              rdfs:range ContactTracingOntology:Place .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#medicationType
+ContactTracingOntology:medicationType rdf:type owl:ObjectProperty ;
+                                      rdfs:domain [ rdf:type owl:Class ;
+                                                    owl:unionOf ( ContactTracingOntology:Medication
+                                                                  ContactTracingOntology:Medication_Type
+                                                                )
+                                                  ] ;
+                                      rdfs:range ContactTracingOntology:Medication_Type .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#organizationType
+ContactTracingOntology:organizationType rdf:type owl:ObjectProperty ,
+                                                 owl:TransitiveProperty ;
+                                        rdfs:domain [ rdf:type owl:Class ;
+                                                      owl:unionOf ( ContactTracingOntology:Organization
+                                                                    ContactTracingOntology:Organization_Type
+                                                                  )
+                                                    ] ;
+                                        rdfs:range ContactTracingOntology:Organization_Type .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#outbreakInvestigation
+ContactTracingOntology:outbreakInvestigation rdf:type owl:ObjectProperty ;
+                                             rdfs:subPropertyOf ContactTracingOntology:visitProperty ;
+                                             rdfs:domain ContactTracingOntology:Visit ;
+                                             rdfs:range ContactTracingOntology:Disease ;
+                                             rdfs:comment "Indicates the Visit has been flagged as the source of a potential outbreak of some disease." .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#owns
+ContactTracingOntology:owns rdf:type owl:ObjectProperty ;
+                            rdfs:domain [ rdf:type owl:Class ;
+                                          owl:unionOf ( ContactTracingOntology:Organization
+                                                        ContactTracingOntology:Place
+                                                      )
+                                        ] ;
+                            rdfs:range ContactTracingOntology:Data .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#partOf
+ContactTracingOntology:partOf rdf:type owl:ObjectProperty ;
+                              rdfs:subPropertyOf ContactTracingOntology:placeProperty ;
+                              rdfs:domain ContactTracingOntology:Place ;
+                              rdfs:range ContactTracingOntology:Place .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#personalInformation
+ContactTracingOntology:personalInformation rdf:type owl:ObjectProperty ;
+                                           rdfs:domain [ rdf:type owl:Class ;
+                                                         owl:unionOf ( ContactTracingOntology:Person
+                                                                       ContactTracingOntology:User
+                                                                     )
+                                                       ] ;
+                                           rdfs:range ContactTracingOntology:Personal_Information .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#placeProperty
+ContactTracingOntology:placeProperty rdf:type owl:ObjectProperty ;
+                                     rdfs:comment "These maybe shouldn't all be subproperties of this property, but since these are all Platys related they feel like they should be grouped." .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#placeType
+ContactTracingOntology:placeType rdf:type owl:ObjectProperty ;
+                                 rdfs:subPropertyOf ContactTracingOntology:placeProperty ;
+                                 rdf:type owl:TransitiveProperty ;
+                                 rdfs:domain [ rdf:type owl:Class ;
+                                               owl:unionOf ( ContactTracingOntology:Place
+                                                             ContactTracingOntology:Place_Type
+                                                           )
+                                             ] ;
+                                 rdfs:range ContactTracingOntology:Place_Type ;
+                                 rdfs:comment "Dislike the name mapsTo., but feel like the lexicology should be consistent, hence the equivalent property." .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#primaryAssigned
+ContactTracingOntology:primaryAssigned rdf:type owl:ObjectProperty ;
+                                       rdfs:subPropertyOf ContactTracingOntology:assigned ;
+                                       rdf:type owl:InverseFunctionalProperty ;
+                                       rdfs:domain ContactTracingOntology:User ;
+                                       rdfs:range ContactTracingOntology:Person ;
+                                       rdfs:comment "For contacts elucidated from a Visit being investigated by more than one User - once the contact is discovered, they should be assigned to a specific User." ,
+                                                    "Since a contact may be updated to a case and it makes sense to use the same contact tracer that was primarily assigned to investigate the contacts of that new case, there is no rule specifying that the Person has to be a contact for some disease since they may be upgraded to case." .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#primaryEmail
+ContactTracingOntology:primaryEmail rdf:type owl:ObjectProperty ;
+                                    rdfs:subPropertyOf ContactTracingOntology:hasEmail ;
+                                    rdf:type owl:FunctionalProperty .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#primaryLanguage
+ContactTracingOntology:primaryLanguage rdf:type owl:ObjectProperty ;
+                                       rdfs:subPropertyOf ContactTracingOntology:speaksLanguage ;
+                                       rdf:type owl:FunctionalProperty .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#primaryPhoneNumber
+ContactTracingOntology:primaryPhoneNumber rdf:type owl:ObjectProperty ;
+                                          rdfs:subPropertyOf ContactTracingOntology:hasPhoneNumber ;
+                                          rdf:type owl:FunctionalProperty .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#recordIn
+ContactTracingOntology:recordIn rdf:type owl:ObjectProperty ;
+                                rdfs:domain ContactTracingOntology:Person ;
+                                rdfs:range ContactTracingOntology:Data .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#represents
+ContactTracingOntology:represents rdf:type owl:ObjectProperty ;
+                                  rdfs:domain ContactTracingOntology:User ;
+                                  rdfs:range ContactTracingOntology:Organization .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#speaksLanguage
+ContactTracingOntology:speaksLanguage rdf:type owl:ObjectProperty ;
+                                      rdfs:subPropertyOf ContactTracingOntology:personalInformation ;
+                                      rdfs:range ContactTracingOntology:Language .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#startAt
+ContactTracingOntology:startAt rdf:type owl:ObjectProperty ;
+                               rdfs:domain ContactTracingOntology:Transportation ;
+                               rdfs:range ContactTracingOntology:Location .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#subData
+ContactTracingOntology:subData rdf:type owl:ObjectProperty ,
+                                        owl:TransitiveProperty ;
+                               rdfs:domain ContactTracingOntology:Data ;
+                               rdfs:range ContactTracingOntology:Data .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#subVisit
+ContactTracingOntology:subVisit rdf:type owl:ObjectProperty ;
+                                rdfs:subPropertyOf ContactTracingOntology:visitProperty ;
+                                rdf:type owl:TransitiveProperty ;
+                                rdfs:domain ContactTracingOntology:Visit ;
+                                rdfs:range ContactTracingOntology:Visit ;
+                                rdfs:comment "For when you visit a place-within-a-place, most likely used in cases where visiting the larger place doesn't necessarily create close contacts (ex: School vs. a specific classroom)" ,
+                                             "Not original Platys property" ,
+                                             "While technically all people who visited the subvisit should have visited the supervisit, so long as the Person in contained in the visit chain (assuming they will eventually be a contact) they probably do not need to be directly linked with the supervisit" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#takesMedication
+ContactTracingOntology:takesMedication rdf:type owl:ObjectProperty ;
+                                       rdfs:subPropertyOf ContactTracingOntology:personalInformation ;
+                                       rdfs:domain ContactTracingOntology:Person ;
+                                       rdfs:range ContactTracingOntology:Medication .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#transportationType
+ContactTracingOntology:transportationType rdf:type owl:ObjectProperty ;
+                                          rdfs:subPropertyOf ContactTracingOntology:placeProperty ;
+                                          rdf:type owl:TransitiveProperty ;
+                                          rdfs:domain [ rdf:type owl:Class ;
+                                                        owl:unionOf ( ContactTracingOntology:Transportation
+                                                                      ContactTracingOntology:Transportation_Type
+                                                                    )
+                                                      ] ;
+                                          rdfs:range ContactTracingOntology:Transportation_Type .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#userDisease
+ContactTracingOntology:userDisease rdf:type owl:ObjectProperty ;
+                                   rdfs:domain ContactTracingOntology:User ;
+                                   rdfs:range ContactTracingOntology:Disease .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#userDomain
+ContactTracingOntology:userDomain rdf:type owl:ObjectProperty ;
+                                  rdfs:domain ContactTracingOntology:User ;
+                                  rdfs:range ContactTracingOntology:Location ;
+                                  rdfs:comment "Most important for Contact Tracers specifically" ,
+                                               "Where the User functions/what locations the user should cover" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#viewedBy
+ContactTracingOntology:viewedBy rdf:type owl:ObjectProperty ;
+                                rdfs:domain ContactTracingOntology:Data ;
+                                rdfs:range ContactTracingOntology:User ;
+                                rdfs:comment "To keep track of who has seen what (which businesses may want to solicit and ask about)" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#visitData
+ContactTracingOntology:visitData rdf:type owl:ObjectProperty ;
+                                 rdfs:subPropertyOf ContactTracingOntology:visitProperty ;
+                                 rdfs:domain ContactTracingOntology:Visit ;
+                                 rdfs:range ContactTracingOntology:Data ;
+                                 rdfs:comment "Any relevant data for the Visit" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#visitProperty
+ContactTracingOntology:visitProperty rdf:type owl:ObjectProperty ;
+                                     rdfs:domain ContactTracingOntology:Visit .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#visitRoster
+ContactTracingOntology:visitRoster rdf:type owl:ObjectProperty ;
+                                   rdfs:subPropertyOf ContactTracingOntology:visitProperty ;
+                                   rdfs:domain ContactTracingOntology:Regular_Visit ;
+                                   rdfs:range ContactTracingOntology:Data ;
+                                   rdfs:comment "For Regular Visits on a schedule" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#visitedBy
+ContactTracingOntology:visitedBy rdf:type owl:ObjectProperty ;
+                                 rdfs:subPropertyOf ContactTracingOntology:visitProperty ;
+                                 rdfs:domain ContactTracingOntology:Visit ;
+                                 rdfs:range ContactTracingOntology:Person .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#visitedPlace
+ContactTracingOntology:visitedPlace rdf:type owl:ObjectProperty ;
+                                    rdfs:subPropertyOf ContactTracingOntology:visitProperty ;
+                                    rdfs:domain ContactTracingOntology:Visit ;
+                                    rdfs:range [ rdf:type owl:Class ;
+                                                 owl:unionOf ( ContactTracingOntology:Place
+                                                               ContactTracingOntology:Transportation
+                                                             )
+                                               ] ;
+                                    rdfs:comment "Not original platys property" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#waiveProtection
+ContactTracingOntology:waiveProtection rdf:type owl:ObjectProperty ;
+                                       rdfs:domain [ rdf:type owl:Class ;
+                                                     owl:unionOf ( ContactTracingOntology:Organization
+                                                                   ContactTracingOntology:Person
+                                                                   ContactTracingOntology:Place
+                                                                   ContactTracingOntology:User
+                                                                 )
+                                                   ] ;
+                                       rdfs:range ContactTracingOntology:Regulation ;
+                                       rdfs:comment "Whoever is being protected can waive the protections. Sometimes. (Like I don't think students can waive FERPA). Will need rules to see if the entity waiving the protection has the authority to waive the protection." .
+
+
+###  http://www.w3.org/2002/07/owl#topObjectProperty
+owl:topObjectProperty rdfs:comment "I'm paranoid that I'm missing something" .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://www.semanticweb.org/ContactTracingOntology#canIsolate
+ContactTracingOntology:canIsolate rdf:type owl:DatatypeProperty ;
+                                  rdfs:subPropertyOf ContactTracingOntology:isCompliant .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#canQuarantine
+ContactTracingOntology:canQuarantine rdf:type owl:DatatypeProperty ;
+                                     rdfs:subPropertyOf ContactTracingOntology:isCompliant .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#canSeparateFromHousehold
+ContactTracingOntology:canSeparateFromHousehold rdf:type owl:DatatypeProperty ;
+                                                rdfs:subPropertyOf ContactTracingOntology:isCompliant .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#complete
+ContactTracingOntology:complete rdf:type owl:DatatypeProperty ;
+                                rdfs:domain [ rdf:type owl:Class ;
+                                              owl:unionOf ( ContactTracingOntology:Person
+                                                            ContactTracingOntology:Visit
+                                                          )
+                                            ] ;
+                                rdfs:range xsd:boolean ;
+                                rdfs:comment "Can also indicate when a Visit has all contacts unearthed on it. Will likely not be automatically changed, but instead manually changed." ,
+                                             """Indicates whether a Person instance has:
+a) A Name
+b) Contact Information of some kind, ideally a phone number
+
+It does not indicate whether all of the information about Person has be unconvered.""" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#dateOfBirth
+ContactTracingOntology:dateOfBirth rdf:type owl:DatatypeProperty ;
+                                   rdfs:subPropertyOf ContactTracingOntology:dateProperty .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#dateOfClear
+ContactTracingOntology:dateOfClear rdf:type owl:DatatypeProperty ;
+                                   rdfs:subPropertyOf ContactTracingOntology:dateProperty ;
+                                   rdfs:comment "When you can get out of quarantine/isolation (assuming no disease develops/worsening of symptom)" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#dateOfContact
+ContactTracingOntology:dateOfContact rdf:type owl:DatatypeProperty ;
+                                     rdfs:subPropertyOf ContactTracingOntology:dateProperty ;
+                                     rdfs:comment "When the contact tracer gets in contact with cases/contacts" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#dateOfContagiousness
+ContactTracingOntology:dateOfContagiousness rdf:type owl:DatatypeProperty ;
+                                            rdfs:subPropertyOf ContactTracingOntology:dateProperty ;
+                                            rdfs:comment "Depends on the disease, but should be 2 days before symptoms first appear for COVID-19. If asymptomatic, should be 2 days before positive test result for COVID-19, though if that's revised to presymptomatic this date can be updated." ,
+                                                         "Generally, contacts who were exposed to presymptomatic cases that thought they were asymptomatic and end up being outside of the exposure window now are not informed/allowed to leave quarantine (based on my experience, though may want to double check for source). The assumption is that 2 days (for COVID-19) is an estimate, and if there was enough viral load to test positive at that point, then there's a chance that you exposed those contacts to the disease." .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#dateOfDiagnosis
+ContactTracingOntology:dateOfDiagnosis rdf:type owl:DatatypeProperty ;
+                                       rdfs:subPropertyOf ContactTracingOntology:dateProperty .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#dateOfExposure
+ContactTracingOntology:dateOfExposure rdf:type owl:DatatypeProperty ;
+                                      rdfs:subPropertyOf ContactTracingOntology:dateProperty .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#dateOfSymptom
+ContactTracingOntology:dateOfSymptom rdf:type owl:DatatypeProperty ;
+                                     rdfs:subPropertyOf ContactTracingOntology:dateProperty .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#dateProperty
+ContactTracingOntology:dateProperty rdf:type owl:DatatypeProperty ;
+                                    rdfs:domain ContactTracingOntology:Person ;
+                                    rdfs:range xsd:dateTime .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#description
+ContactTracingOntology:description rdf:type owl:DatatypeProperty ;
+                                   rdfs:domain [ rdf:type owl:Class ;
+                                                 owl:unionOf ( ContactTracingOntology:Organization
+                                                               ContactTracingOntology:Person
+                                                               ContactTracingOntology:Place
+                                                               ContactTracingOntology:Transportation
+                                                               ContactTracingOntology:Visit
+                                                             )
+                                               ] ;
+                                   rdfs:range xsd:string ;
+                                   rdfs:comment "Especially useful with Persons you don't have complete information for because of a large gathering (ex: You don't know Frank's number or last name but you do know he's tall Frank with the baseball cap)" ,
+                                                "In order to jog people's memories about certain events/places." ,
+                                                "So if a close contact was at a visit and one of those Persons at the Visit does not have the complete information, you can read the contact the description and ask for contact information" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#eventID
+ContactTracingOntology:eventID rdf:type owl:DatatypeProperty ;
+                               rdfs:domain ContactTracingOntology:Regular_Visit ;
+                               rdfs:range xsd:integer .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasAge
+ContactTracingOntology:hasAge rdf:type owl:DatatypeProperty ;
+                              rdfs:domain ContactTracingOntology:Person ;
+                              rdfs:range xsd:integer ;
+                              rdfs:comment "Note: May move to object property" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasFirstName
+ContactTracingOntology:hasFirstName rdf:type owl:DatatypeProperty ;
+                                    rdfs:subPropertyOf ContactTracingOntology:hasName .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasLastName
+ContactTracingOntology:hasLastName rdf:type owl:DatatypeProperty ;
+                                   rdfs:subPropertyOf ContactTracingOntology:hasName .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#hasName
+ContactTracingOntology:hasName rdf:type owl:DatatypeProperty ;
+                               rdfs:domain ContactTracingOntology:Person ;
+                               rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#isCompliant
+ContactTracingOntology:isCompliant rdf:type owl:DatatypeProperty ;
+                                   rdfs:domain ContactTracingOntology:Person ;
+                                   rdfs:range xsd:boolean .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#isJobRelated
+ContactTracingOntology:isJobRelated rdf:type owl:DatatypeProperty ;
+                                    rdfs:domain ContactTracingOntology:Visit ;
+                                    rdfs:range xsd:boolean ;
+                                    rdfs:comment "Indicates a visit should be viewed as transmitting through a workplace (a flag used when a case uses the visit to indicate work hours). If a case comes from another employee of the same workplace as a consequence of the visit, additional authorities get involved." ,
+                                                 "Note: Authorities should also get involved if two employees working in the same workplace who do not know how they were exposed (no date of exposure) both develop a disease, so this isn't the only way to end up investigating a workpalce." .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#priority
+ContactTracingOntology:priority rdf:type owl:DatatypeProperty ;
+                                rdfs:range xsd:integer ;
+                                rdfs:comment "Can set a Visit priority to zero after all contacts have been elicited from the visit and/or if no positive cases attended the visit" ,
+                                             "Indicates the level of risk associated with each job/job type/visit/place type/place" ,
+                                             "Priority of a Place trumps a Place Type, same for Job" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#userID
+ContactTracingOntology:userID rdf:type owl:DatatypeProperty ;
+                              rdfs:domain ContactTracingOntology:User ;
+                              rdfs:range xsd:integer .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#visitEndTime
+ContactTracingOntology:visitEndTime rdf:type owl:DatatypeProperty ;
+                                    rdfs:subPropertyOf ContactTracingOntology:visitTime .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#visitStartTime
+ContactTracingOntology:visitStartTime rdf:type owl:DatatypeProperty ;
+                                      rdfs:subPropertyOf ContactTracingOntology:visitTime .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#visitTime
+ContactTracingOntology:visitTime rdf:type owl:DatatypeProperty ;
+                                 rdfs:domain ContactTracingOntology:Visit ;
+                                 rdfs:range xsd:dateTime .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.semanticweb.org/ContactTracingOntology#Address
+ContactTracingOntology:Address rdf:type owl:Class ;
+                               rdfs:subClassOf ContactTracingOntology:Location .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Ambiance
+ContactTracingOntology:Ambiance rdf:type owl:Class ;
+                                rdfs:subClassOf ContactTracingOntology:Place_Information .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Availability
+ContactTracingOntology:Availability rdf:type owl:Class ;
+                                    rdfs:subClassOf ContactTracingOntology:Open_Information .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Closed_Information
+ContactTracingOntology:Closed_Information rdf:type owl:Class ;
+                                          rdfs:subClassOf ContactTracingOntology:Personal_Information ;
+                                          rdfs:comment "Most roles (ex: Contact Tracers) can't see this data." .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Comorbidity
+ContactTracingOntology:Comorbidity rdf:type owl:Class ;
+                                   rdfs:subClassOf ContactTracingOntology:Closed_Information ;
+                                   rdfs:comment "Includes preexisting conditions, chronic conditions, or states (Pregnancy, Smoking, etc.) Note: Will likely have a pregnancy flag, because people seem very interested in that." .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Contact_Information
+ContactTracingOntology:Contact_Information rdf:type owl:Class ;
+                                           rdfs:subClassOf ContactTracingOntology:Contact_Tracing ,
+                                                           ContactTracingOntology:Open_Information .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Contact_Tracing
+ContactTracingOntology:Contact_Tracing rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Data
+ContactTracingOntology:Data rdf:type owl:Class ;
+                            rdfs:subClassOf ContactTracingOntology:Contact_Tracing ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty ContactTracingOntology:dataType ;
+                                              owl:someValuesFrom ContactTracingOntology:Data_Type
+                                            ] ;
+                            rdfs:comment "Also includes Data from specific places." .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Data_Type
+ContactTracingOntology:Data_Type rdf:type owl:Class ;
+                                 rdfs:subClassOf ContactTracingOntology:Contact_Tracing ;
+                                 rdfs:comment "The type of Organization Data (ex: Health Record, Educational Record, etc.) but not the specific data (ex: not Sally Smith's Existing Health Record)" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Demographic
+ContactTracingOntology:Demographic rdf:type owl:Class ;
+                                   rdfs:subClassOf ContactTracingOntology:Closed_Information .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Disease
+ContactTracingOntology:Disease rdf:type owl:Class ;
+                               rdfs:subClassOf ContactTracingOntology:Contact_Tracing ;
+                               rdfs:comment "Ex: COVID-19 or SARS-CoV-2, Tuberculosis, etc." .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Email
+ContactTracingOntology:Email rdf:type owl:Class ;
+                             rdfs:subClassOf ContactTracingOntology:Contact_Information ,
+                                             [ rdf:type owl:Restriction ;
+                                               owl:onProperty [ owl:inverseOf ContactTracingOntology:hasEmail
+                                                              ] ;
+                                               owl:someValuesFrom [ rdf:type owl:Class ;
+                                                                    owl:unionOf ( ContactTracingOntology:Organization
+                                                                                  ContactTracingOntology:Person
+                                                                                  ContactTracingOntology:Place
+                                                                                  ContactTracingOntology:User
+                                                                                )
+                                                                  ]
+                                             ] .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Ethnicity
+ContactTracingOntology:Ethnicity rdf:type owl:Class ;
+                                 rdfs:subClassOf ContactTracingOntology:Demographic .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Gender
+ContactTracingOntology:Gender rdf:type owl:Class ;
+                              rdfs:subClassOf ContactTracingOntology:Demographic .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Job
+ContactTracingOntology:Job rdf:type owl:Class ;
+                           rdfs:subClassOf ContactTracingOntology:Protected_Information ,
+                                           [ rdf:type owl:Restriction ;
+                                             owl:onProperty ContactTracingOntology:hasEmployer ;
+                                             owl:someValuesFrom [ rdf:type owl:Class ;
+                                                                  owl:unionOf ( ContactTracingOntology:Organization
+                                                                                ContactTracingOntology:Person
+                                                                                ContactTracingOntology:Place
+                                                                              )
+                                                                ]
+                                           ] ,
+                                           [ rdf:type owl:Restriction ;
+                                             owl:onProperty ContactTracingOntology:jobType ;
+                                             owl:someValuesFrom ContactTracingOntology:Job_Type
+                                           ] ;
+                           rdfs:comment "Associated with a GeoPlace or Organization Employer" ,
+                                        "Specific Job (Doctor at Edward's Hospital, Cashier at Trader Joe's)" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Job_Type
+ContactTracingOntology:Job_Type rdf:type owl:Class ;
+                                rdfs:subClassOf ContactTracingOntology:Protected_Information ;
+                                rdfs:comment "Associated with a Place or Organization_Type Employer" ,
+                                             "Consider: Grouping all the types" ,
+                                             "Job Category (Doctor, Lawyer, Cashier)" ,
+                                             "May move to personal information" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Language
+ContactTracingOntology:Language rdf:type owl:Class ;
+                                rdfs:subClassOf ContactTracingOntology:Open_Information .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Layout
+ContactTracingOntology:Layout rdf:type owl:Class ;
+                              rdfs:subClassOf ContactTracingOntology:Place_Information .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Location
+ContactTracingOntology:Location rdf:type owl:Class ;
+                                rdfs:subClassOf ContactTracingOntology:Place_Information ;
+                                rdfs:comment "Changed to help apply regulations to proper locations (since those are more commonly associated with regions as opposed to a latitude/longitude position, but the position could be reassociated with a region)" ,
+                                             "Not Original Platys (subsumed Position)" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Medication
+ContactTracingOntology:Medication rdf:type owl:Class ;
+                                  rdfs:subClassOf ContactTracingOntology:Closed_Information ;
+                                  rdfs:comment "Ex: Specific kind of medication (Penicillin, etc.)" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Medication_Type
+ContactTracingOntology:Medication_Type rdf:type owl:Class ;
+                                       rdfs:subClassOf ContactTracingOntology:Closed_Information ;
+                                       rdfs:comment "Ex: Antibiotic, Steroid, etc." .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Open_Information
+ContactTracingOntology:Open_Information rdf:type owl:Class ;
+                                        rdfs:subClassOf ContactTracingOntology:Personal_Information ;
+                                        rdfs:comment "Accessible by most users in the system if properly assigned. (ex. Contact Tracers assigned tot he person at hand can see this)" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Organization
+ContactTracingOntology:Organization rdf:type owl:Class ;
+                                    rdfs:subClassOf ContactTracingOntology:Contact_Tracing ,
+                                                    [ rdf:type owl:Restriction ;
+                                                      owl:onProperty ContactTracingOntology:organizationType ;
+                                                      owl:someValuesFrom ContactTracingOntology:Organization_Type
+                                                    ] ;
+                                    rdfs:comment "Any organization that either: A) Interacts with the system or B) Interacts with the system without being a specified place. The specific organization - ex: Elmwood Elementary School, etc." .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Organization_Type
+ContactTracingOntology:Organization_Type rdf:type owl:Class ;
+                                         rdfs:subClassOf ContactTracingOntology:Contact_Tracing ;
+                                         rdfs:comment """The category of Organization (ex: Health Provider, School, etc.)
+
+Note: Something can be an Organization Type and a Place at the same Time""" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Person
+ContactTracingOntology:Person rdf:type owl:Class ;
+                              rdfs:subClassOf ContactTracingOntology:Contact_Tracing ,
+                                              [ rdf:type owl:Class ;
+                                                owl:unionOf ( [ owl:intersectionOf ( [ rdf:type owl:Class ;
+                                                                                       owl:unionOf ( [ rdf:type owl:Restriction ;
+                                                                                                       owl:onProperty ContactTracingOntology:hasContactInformation ;
+                                                                                                       owl:someValuesFrom ContactTracingOntology:Contact_Information
+                                                                                                     ]
+                                                                                                     [ rdf:type owl:Restriction ;
+                                                                                                       owl:onProperty ContactTracingOntology:description ;
+                                                                                                       owl:someValuesFrom xsd:string
+                                                                                                     ]
+                                                                                                     [ rdf:type owl:Restriction ;
+                                                                                                       owl:onProperty ContactTracingOntology:hasName ;
+                                                                                                       owl:someValuesFrom xsd:string
+                                                                                                     ]
+                                                                                                   )
+                                                                                     ]
+                                                                                     [ rdf:type owl:Restriction ;
+                                                                                       owl:onProperty [ owl:inverseOf ContactTracingOntology:visitedBy
+                                                                                                      ] ;
+                                                                                       owl:someValuesFrom ContactTracingOntology:Visit
+                                                                                     ]
+                                                                                   ) ;
+                                                                rdf:type owl:Class
+                                                              ]
+                                                              [ owl:intersectionOf ( [ rdf:type owl:Restriction ;
+                                                                                       owl:onProperty ContactTracingOntology:hasContactInformation ;
+                                                                                       owl:someValuesFrom ContactTracingOntology:Contact_Information
+                                                                                     ]
+                                                                                     [ rdf:type owl:Restriction ;
+                                                                                       owl:onProperty ContactTracingOntology:hasName ;
+                                                                                       owl:someValuesFrom xsd:string
+                                                                                     ]
+                                                                                   ) ;
+                                                                rdf:type owl:Class
+                                                              ]
+                                                            )
+                                              ] ,
+                                              [ rdf:type owl:Restriction ;
+                                                owl:onProperty ContactTracingOntology:dateOfClear ;
+                                                owl:someValuesFrom xsd:dateTime
+                                              ] ;
+                              rdfs:comment "Persons involved in the Contact Tracing systems (cases, contacts, emergency contacts, proxies, etc.)" ,
+                                           "Recommend creating Person instances with ID numbers because there's not a guarantee that you'll have their name" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Personal_Information
+ContactTracingOntology:Personal_Information rdf:type owl:Class ;
+                                            rdfs:subClassOf ContactTracingOntology:Contact_Tracing ;
+                                            rdfs:comment "Personal Information included as datatypes: Date properties (Birth, Symptom, Clear, Contact, Exposure), Name, Phone Number, Email, Age, Height, Weight)" ,
+                                                         "https://www.cdc.gov/coronavirus/2019-ncov/php/notification-of-exposure.html" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Phone_Number
+ContactTracingOntology:Phone_Number rdf:type owl:Class ;
+                                    rdfs:subClassOf ContactTracingOntology:Contact_Information ,
+                                                    [ rdf:type owl:Restriction ;
+                                                      owl:onProperty [ owl:inverseOf ContactTracingOntology:hasPhoneNumber
+                                                                     ] ;
+                                                      owl:someValuesFrom [ rdf:type owl:Class ;
+                                                                           owl:unionOf ( ContactTracingOntology:Organization
+                                                                                         ContactTracingOntology:Person
+                                                                                         ContactTracingOntology:Place
+                                                                                         ContactTracingOntology:User
+                                                                                       )
+                                                                         ]
+                                                    ] .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Place
+ContactTracingOntology:Place rdf:type owl:Class ;
+                             rdfs:subClassOf ContactTracingOntology:Contact_Tracing ,
+                                             [ rdf:type owl:Restriction ;
+                                               owl:onProperty [ owl:inverseOf ContactTracingOntology:mapsTo
+                                                              ] ;
+                                               owl:someValuesFrom [ rdf:type owl:Class ;
+                                                                    owl:unionOf ( ContactTracingOntology:Address
+                                                                                  ContactTracingOntology:Position
+                                                                                )
+                                                                  ]
+                                             ] ;
+                             rdfs:comment "Specific Places" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Place_Information
+ContactTracingOntology:Place_Information rdf:type owl:Class ;
+                                         rdfs:subClassOf ContactTracingOntology:Contact_Tracing ;
+                                         rdfs:comment "A way to characterize the places visisted by the Persons" ,
+                                                      "https://ebiquity.umbc.edu/_file_directory_/papers/757.pdf" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Place_Type
+ContactTracingOntology:Place_Type rdf:type owl:Class ;
+                                  rdfs:subClassOf ContactTracingOntology:Place_Information ;
+                                  rdfs:comment "Category of Places (ex. School, Hospital)" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Position
+ContactTracingOntology:Position rdf:type owl:Class ;
+                                rdfs:subClassOf ContactTracingOntology:Location .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Protected_Information
+ContactTracingOntology:Protected_Information rdf:type owl:Class ;
+                                             rdfs:subClassOf ContactTracingOntology:Personal_Information ;
+                                             rdfs:comment "Users with specific roles (such as contact tracers) can see this information, but only under specific circumstances." .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Race
+ContactTracingOntology:Race rdf:type owl:Class ;
+                            rdfs:subClassOf ContactTracingOntology:Demographic .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Regular_Visit
+ContactTracingOntology:Regular_Visit rdf:type owl:Class ;
+                                     rdfs:subClassOf ContactTracingOntology:Visit ,
+                                                     [ rdf:type owl:Restriction ;
+                                                       owl:onProperty ContactTracingOntology:eventID ;
+                                                       owl:someValuesFrom xsd:integer
+                                                     ] ;
+                                     rdfs:comment "For visits on a schedule" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Regulation
+ContactTracingOntology:Regulation rdf:type owl:Class ;
+                                  rdfs:subClassOf ContactTracingOntology:Contact_Tracing ,
+                                                  [ rdf:type owl:Restriction ;
+                                                    owl:onProperty ContactTracingOntology:hasDomain ;
+                                                    owl:someValuesFrom [ rdf:type owl:Class ;
+                                                                         owl:unionOf ( ContactTracingOntology:Location
+                                                                                       ContactTracingOntology:Organization
+                                                                                       ContactTracingOntology:Organization_Type
+                                                                                       ContactTracingOntology:Person
+                                                                                       ContactTracingOntology:Place
+                                                                                       ContactTracingOntology:Place_Type
+                                                                                     )
+                                                                       ]
+                                                  ] ;
+                                  rdfs:comment "Ex: FERPA, HIPAA, GDPR, any law that might affect how contact tracing is carried out." .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Role
+ContactTracingOntology:Role rdf:type owl:Class ;
+                            rdfs:subClassOf ContactTracingOntology:Contact_Tracing ;
+                            rdfs:comment "The reason/job the User uses/has to interact with the system (Ex: Contact Tracer)" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Symptom
+ContactTracingOntology:Symptom rdf:type owl:Class ;
+                               rdfs:subClassOf ContactTracingOntology:Contact_Tracing ,
+                                               ContactTracingOntology:Protected_Information ;
+                               rdfs:comment "Ex: Fever, cough, etc." .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Transportation
+ContactTracingOntology:Transportation rdf:type owl:Class ;
+                                      rdfs:subClassOf ContactTracingOntology:Place ,
+                                                      [ owl:intersectionOf ( [ rdf:type owl:Restriction ;
+                                                                               owl:onProperty ContactTracingOntology:endAt ;
+                                                                               owl:someValuesFrom ContactTracingOntology:Location
+                                                                             ]
+                                                                             [ rdf:type owl:Restriction ;
+                                                                               owl:onProperty ContactTracingOntology:startAt ;
+                                                                               owl:someValuesFrom ContactTracingOntology:Location
+                                                                             ]
+                                                                           ) ;
+                                                        rdf:type owl:Class
+                                                      ] ;
+                                      rdfs:comment "For planes/trains/cars/other long journeys that aren't physical places but also can cause disease transmission" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Transportation_Type
+ContactTracingOntology:Transportation_Type rdf:type owl:Class ;
+                                           rdfs:subClassOf ContactTracingOntology:Place_Information ;
+                                           rdfs:comment "For the type of transportation (plane/train/car...)" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Tribal_Affiliation
+ContactTracingOntology:Tribal_Affiliation rdf:type owl:Class ;
+                                          rdfs:subClassOf ContactTracingOntology:Demographic .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#User
+ContactTracingOntology:User rdf:type owl:Class ;
+                            rdfs:subClassOf ContactTracingOntology:Contact_Tracing ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty ContactTracingOntology:hasRole ;
+                                              owl:someValuesFrom ContactTracingOntology:Role
+                                            ] ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty ContactTracingOntology:represents ;
+                                              owl:someValuesFrom ContactTracingOntology:Organization
+                                            ] ;
+                            rdfs:comment "Anyone directly interfacing with this system" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Visit
+ContactTracingOntology:Visit rdf:type owl:Class ;
+                             rdfs:subClassOf ContactTracingOntology:Contact_Tracing ;
+                             rdfs:comment "How to associate Persons, Place, and Time via an n-ary. https://www.w3.org/TR/swbp-n-aryRelations/" .
+
+
+###  http://www.w3.org/2002/07/owl#Thing
+owl:Thing rdfs:comment "This might be too large -- attempt to pair it down" .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://www.semanticweb.org/ContactTracingOntology#AMC_Movie_Ticket_Data
+ContactTracingOntology:AMC_Movie_Ticket_Data rdf:type owl:NamedIndividual ,
+                                                      ContactTracingOntology:Data ;
+                                             ContactTracingOntology:dataType ContactTracingOntology:Movie_Ticket_Data .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Bob
+ContactTracingOntology:Bob rdf:type owl:NamedIndividual ,
+                                    ContactTracingOntology:Person .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Business_Representative
+ContactTracingOntology:Business_Representative rdf:type owl:NamedIndividual ,
+                                                        ContactTracingOntology:Role .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#COVID-19
+ContactTracingOntology:COVID-19 rdf:type owl:NamedIndividual ,
+                                         ContactTracingOntology:Disease .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Care_Coordinator
+ContactTracingOntology:Care_Coordinator rdf:type owl:NamedIndividual ,
+                                                 ContactTracingOntology:Role .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Case_Investigator
+ContactTracingOntology:Case_Investigator rdf:type owl:NamedIndividual ,
+                                                  ContactTracingOntology:Role .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Chicago
+ContactTracingOntology:Chicago rdf:type owl:NamedIndividual ,
+                                        ContactTracingOntology:Location ;
+                               ContactTracingOntology:in ContactTracingOntology:Illinois .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Contact_Tracer
+ContactTracingOntology:Contact_Tracer rdf:type owl:NamedIndividual ,
+                                               ContactTracingOntology:Role .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Educational_Records
+ContactTracingOntology:Educational_Records rdf:type owl:NamedIndividual ,
+                                                    ContactTracingOntology:Data_Type .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Employee_Records
+ContactTracingOntology:Employee_Records rdf:type owl:NamedIndividual ,
+                                                 ContactTracingOntology:Data_Type .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Grocery_Store
+ContactTracingOntology:Grocery_Store rdf:type owl:NamedIndividual ,
+                                              ContactTracingOntology:Place_Type ;
+                                     ContactTracingOntology:placeType ContactTracingOntology:Store .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#High_School
+ContactTracingOntology:High_School rdf:type owl:NamedIndividual ,
+                                            ContactTracingOntology:Place_Type ;
+                                   ContactTracingOntology:placeType ContactTracingOntology:School .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#House
+ContactTracingOntology:House rdf:type owl:NamedIndividual ,
+                                      ContactTracingOntology:Place_Type ;
+                             ContactTracingOntology:placeType ContactTracingOntology:Living_Space .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Illinois
+ContactTracingOntology:Illinois rdf:type owl:NamedIndividual ,
+                                         ContactTracingOntology:Location ;
+                                ContactTracingOntology:in ContactTracingOntology:USA .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Living_Space
+ContactTracingOntology:Living_Space rdf:type owl:NamedIndividual ,
+                                             ContactTracingOntology:Place_Type .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Maryland
+ContactTracingOntology:Maryland rdf:type owl:NamedIndividual ,
+                                         ContactTracingOntology:Location ;
+                                ContactTracingOntology:in ContactTracingOntology:USA .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Maryland_High_School_Educational_Records
+ContactTracingOntology:Maryland_High_School_Educational_Records rdf:type owl:NamedIndividual ,
+                                                                         ContactTracingOntology:Data ;
+                                                                ContactTracingOntology:dataType ContactTracingOntology:Educational_Records .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Maryland_High_School_Roster
+ContactTracingOntology:Maryland_High_School_Roster rdf:type owl:NamedIndividual ,
+                                                            ContactTracingOntology:Data ;
+                                                   ContactTracingOntology:dataType ContactTracingOntology:Educational_Records ,
+                                                                                   ContactTracingOntology:Roster .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Movie_Theatre
+ContactTracingOntology:Movie_Theatre rdf:type owl:NamedIndividual ,
+                                              ContactTracingOntology:Place_Type .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Movie_Ticket_Data
+ContactTracingOntology:Movie_Ticket_Data rdf:type owl:NamedIndividual ,
+                                                  ContactTracingOntology:Data_Type ;
+                                         ContactTracingOntology:dataType ContactTracingOntology:Reservation_Data ,
+                                                                         ContactTracingOntology:Transaction_Data .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Outbreak_Investigator
+ContactTracingOntology:Outbreak_Investigator rdf:type owl:NamedIndividual ,
+                                                      ContactTracingOntology:Role .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Person1a
+ContactTracingOntology:Person1a rdf:type owl:NamedIndividual ,
+                                         ContactTracingOntology:Person ;
+                                ContactTracingOntology:hasAvailability <http://www.semanticweb.org/ContactTracingOntology#Weekdays,_2-6pm> ,
+                                                                       <http://www.semanticweb.org/ContactTracingOntology#Weekends,_10am-3pm> ;
+                                ContactTracingOntology:hasEmergencyContact ContactTracingOntology:Person4a ;
+                                ContactTracingOntology:hasJob <http://www.semanticweb.org/ContactTracingOntology#Cashier:_Bob's_Grocery_Store> ;
+                                ContactTracingOntology:hasPhoneNumber <http://www.semanticweb.org/ContactTracingOntology#123-123-1234> ;
+                                ContactTracingOntology:hasSymptom ContactTracingOntology:no_smell ,
+                                                                  ContactTracingOntology:no_taste ;
+                                ContactTracingOntology:isCaseFor ContactTracingOntology:COVID-19 ;
+                                ContactTracingOntology:livesAt ContactTracingOntology:Place1a ;
+                                ContactTracingOntology:primaryPhoneNumber <http://www.semanticweb.org/ContactTracingOntology#123-456-7890> ;
+                                ContactTracingOntology:recordIn ContactTracingOntology:Maryland_High_School_Educational_Records ,
+                                                                <http://www.semanticweb.org/ContactTracingOntology#Bob's_Employee_Records> ;
+                                ContactTracingOntology:canIsolate "true"^^xsd:boolean ;
+                                ContactTracingOntology:canSeparateFromHousehold "false"^^xsd:boolean ;
+                                ContactTracingOntology:complete "true"^^xsd:boolean ;
+                                ContactTracingOntology:dateOfClear "2021-07-15T00:00:00"^^xsd:dateTime ;
+                                ContactTracingOntology:dateOfContact "2021-07-07T00:00:00"^^xsd:dateTime ;
+                                ContactTracingOntology:dateOfContagiousness "2021-07-03T00:00:00"^^xsd:dateTime ;
+                                ContactTracingOntology:dateOfDiagnosis "2021-07-06T00:00:00"^^xsd:dateTime ;
+                                ContactTracingOntology:dateOfSymptom "2021-07-05T00:00:00"^^xsd:dateTime ;
+                                ContactTracingOntology:hasAge 16 ;
+                                ContactTracingOntology:hasFirstName "Alice" ;
+                                ContactTracingOntology:hasLastName "Smith" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Person2a
+ContactTracingOntology:Person2a rdf:type owl:NamedIndividual ,
+                                         ContactTracingOntology:Person ;
+                                ContactTracingOntology:hasPhoneNumber <http://www.semanticweb.org/ContactTracingOntology#123-444-5656> ;
+                                ContactTracingOntology:isContactFor ContactTracingOntology:COVID-19 ;
+                                ContactTracingOntology:recordIn ContactTracingOntology:Maryland_High_School_Educational_Records ;
+                                ContactTracingOntology:complete "true"^^xsd:boolean ;
+                                ContactTracingOntology:dateOfClear "2021-07-17T00:00:00"^^xsd:dateTime ;
+                                ContactTracingOntology:dateOfExposure "2021-07-03T00:00:00"^^xsd:dateTime ;
+                                ContactTracingOntology:hasFirstName "Catherine"^^xsd:string ;
+                                ContactTracingOntology:hasLastName "Cole"^^xsd:string .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Person3a
+ContactTracingOntology:Person3a rdf:type owl:NamedIndividual ,
+                                         ContactTracingOntology:Person ;
+                                ContactTracingOntology:isContactFor ContactTracingOntology:COVID-19 ;
+                                ContactTracingOntology:complete "false"^^xsd:boolean ;
+                                ContactTracingOntology:dateOfClear "2021-07-17T00:00:00"^^xsd:dateTime ;
+                                ContactTracingOntology:dateOfExposure "2021-07-03T00:00:00"^^xsd:dateTime ;
+                                ContactTracingOntology:description "Catherine Cole's tall friend with dark hair and glasses, went to the movies to see Black Widow on Saturday, 07/03"^^xsd:string ;
+                                ContactTracingOntology:hasFirstName "Heather"^^xsd:string .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Person4a
+ContactTracingOntology:Person4a rdf:type owl:NamedIndividual ,
+                                         ContactTracingOntology:Person ;
+                                ContactTracingOntology:isContactFor ContactTracingOntology:COVID-19 ;
+                                ContactTracingOntology:livesAt ContactTracingOntology:Place1a ;
+                                ContactTracingOntology:primaryPhoneNumber <http://www.semanticweb.org/ContactTracingOntology#123-123-1234> ;
+                                ContactTracingOntology:canQuarantine "false"^^xsd:boolean ;
+                                ContactTracingOntology:dateOfClear "2021-07-29T00:00:00"^^xsd:dateTime ;
+                                ContactTracingOntology:dateOfContact "2021-07-07T00:00:00"^^xsd:dateTime ;
+                                ContactTracingOntology:hasFirstName "Samantha"^^xsd:string ;
+                                ContactTracingOntology:hasLastName "Smith"^^xsd:string .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Place1a
+ContactTracingOntology:Place1a rdf:type owl:NamedIndividual ,
+                                        ContactTracingOntology:Place ;
+                               ContactTracingOntology:livesAt <http://www.semanticweb.org/ContactTracingOntology#123_Main_St.,_Maryland,_USA> ;
+                               ContactTracingOntology:placeType ContactTracingOntology:House .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Place2a
+ContactTracingOntology:Place2a rdf:type owl:NamedIndividual ,
+                                        ContactTracingOntology:Place ;
+                               ContactTracingOntology:belongsTo ContactTracingOntology:Bob ;
+                               ContactTracingOntology:hasAddress <http://www.semanticweb.org/ContactTracingOntology#54_West_St.,_Maryland,_USA> ;
+                               ContactTracingOntology:hasAmbiance ContactTracingOntology:inside ,
+                                                                  ContactTracingOntology:large ;
+                               ContactTracingOntology:owns <http://www.semanticweb.org/ContactTracingOntology#Bob's_Employee_Records> ,
+                                                           <http://www.semanticweb.org/ContactTracingOntology#Bob's_Employee_Schedule> ,
+                                                           <http://www.semanticweb.org/ContactTracingOntology#Bob's_Transaction_Data> ;
+                               ContactTracingOntology:placeType ContactTracingOntology:Grocery_Store ;
+                               ContactTracingOntology:primaryPhoneNumber <http://www.semanticweb.org/ContactTracingOntology#123-222-2222> ;
+                               ContactTracingOntology:description "Bob's Grocery Store on West St."^^xsd:string .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Place3a
+ContactTracingOntology:Place3a rdf:type owl:NamedIndividual ,
+                                        ContactTracingOntology:Organization ,
+                                        ContactTracingOntology:Place ;
+                               ContactTracingOntology:hasAddress <http://www.semanticweb.org/ContactTracingOntology#67_East_Ave.,_Maryland,_USA> ;
+                               ContactTracingOntology:placeType ContactTracingOntology:Movie_Theatre ;
+                               ContactTracingOntology:primaryPhoneNumber <http://www.semanticweb.org/ContactTracingOntology#123-357-2468> ;
+                               ContactTracingOntology:description "AMC Movie Theatre in Maryland on East Avenue"^^xsd:string .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Place4a
+ContactTracingOntology:Place4a rdf:type owl:NamedIndividual ,
+                                        ContactTracingOntology:Place ;
+                               ContactTracingOntology:partOf ContactTracingOntology:Place3a ;
+                               ContactTracingOntology:description "Theatre 2"^^xsd:string ,
+                                                                  "Theatre 2 in AMC Theatre, Screened Black Widow at 8pm 7/3/21"^^xsd:string .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Place5a
+ContactTracingOntology:Place5a rdf:type owl:NamedIndividual ,
+                                        ContactTracingOntology:Place ;
+                               ContactTracingOntology:hasAddress <http://www.semanticweb.org/ContactTracingOntology#222_School_St.,_Maryland,_USA> ;
+                               ContactTracingOntology:owns ContactTracingOntology:Maryland_High_School_Educational_Records ,
+                                                           ContactTracingOntology:Maryland_High_School_Roster ;
+                               ContactTracingOntology:placeType ContactTracingOntology:High_School ,
+                                                                ContactTracingOntology:Public_School ;
+                               ContactTracingOntology:description "Maryland High School"^^xsd:string ;
+                               rdfs:comment "START HERE" .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Place6a
+ContactTracingOntology:Place6a rdf:type owl:NamedIndividual ,
+                                        ContactTracingOntology:Place ;
+                               ContactTracingOntology:hasAmbiance ContactTracingOntology:small ;
+                               ContactTracingOntology:partOf ContactTracingOntology:Place5a ;
+                               ContactTracingOntology:description "Mr. Green's Biology class takes place in room 26 for Summer School at Maryland High School"^^xsd:string ,
+                                                                  "Room 26"^^xsd:string .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Public_Health_Maryland
+ContactTracingOntology:Public_Health_Maryland rdf:type owl:NamedIndividual ,
+                                                       ContactTracingOntology:Organization ;
+                                              ContactTracingOntology:allowAccess ContactTracingOntology:Visit1a ,
+                                                                                 ContactTracingOntology:Visit2a .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Public_School
+ContactTracingOntology:Public_School rdf:type owl:NamedIndividual ,
+                                              ContactTracingOntology:Place_Type ;
+                                     ContactTracingOntology:placeType ContactTracingOntology:School .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Reservation_Data
+ContactTracingOntology:Reservation_Data rdf:type owl:NamedIndividual ,
+                                                 ContactTracingOntology:Data_Type .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Roster
+ContactTracingOntology:Roster rdf:type owl:NamedIndividual ,
+                                       ContactTracingOntology:Data_Type .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Schedule
+ContactTracingOntology:Schedule rdf:type owl:NamedIndividual ,
+                                         ContactTracingOntology:Data_Type ;
+                                ContactTracingOntology:dataType ContactTracingOntology:Employee_Records ,
+                                                                ContactTracingOntology:Schedule .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#School
+ContactTracingOntology:School rdf:type owl:NamedIndividual ,
+                                       ContactTracingOntology:Place_Type .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Store
+ContactTracingOntology:Store rdf:type owl:NamedIndividual ,
+                                      ContactTracingOntology:Place_Type .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Theatre
+ContactTracingOntology:Theatre rdf:type owl:NamedIndividual ,
+                                        ContactTracingOntology:Place_Type .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Transaction_Data
+ContactTracingOntology:Transaction_Data rdf:type owl:NamedIndividual ,
+                                                 ContactTracingOntology:Data_Type .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Tuberculosis
+ContactTracingOntology:Tuberculosis rdf:type owl:NamedIndividual ,
+                                             ContactTracingOntology:Disease .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#USA
+ContactTracingOntology:USA rdf:type owl:NamedIndividual ,
+                                    ContactTracingOntology:Location ;
+                           owl:sameAs ContactTracingOntology:United_States .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#United_States
+ContactTracingOntology:United_States rdf:type owl:NamedIndividual ,
+                                              ContactTracingOntology:Location .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#UserA
+ContactTracingOntology:UserA rdf:type owl:NamedIndividual ,
+                                      ContactTracingOntology:User ;
+                             ContactTracingOntology:assigned ContactTracingOntology:Person1a ;
+                             ContactTracingOntology:hasRole ContactTracingOntology:Case_Investigator ;
+                             ContactTracingOntology:userDisease ContactTracingOntology:COVID-19 ;
+                             ContactTracingOntology:userDomain ContactTracingOntology:Maryland ;
+                             ContactTracingOntology:userID "1111111"^^xsd:int .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#UserB
+ContactTracingOntology:UserB rdf:type owl:NamedIndividual ,
+                                      ContactTracingOntology:User ;
+                             ContactTracingOntology:hasRole ContactTracingOntology:Case_Investigator ;
+                             ContactTracingOntology:userDisease ContactTracingOntology:Tuberculosis ;
+                             ContactTracingOntology:userDomain ContactTracingOntology:Maryland ;
+                             ContactTracingOntology:userID "2222222"^^xsd:int .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#UserC
+ContactTracingOntology:UserC rdf:type owl:NamedIndividual ,
+                                      ContactTracingOntology:User ;
+                             ContactTracingOntology:assigned ContactTracingOntology:Person1a ;
+                             ContactTracingOntology:hasRole ContactTracingOntology:Contact_Tracer ;
+                             ContactTracingOntology:userDisease ContactTracingOntology:COVID-19 ;
+                             ContactTracingOntology:userDomain ContactTracingOntology:Maryland ;
+                             ContactTracingOntology:userID "3333333"^^xsd:int .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#UserD
+ContactTracingOntology:UserD rdf:type owl:NamedIndividual ,
+                                      ContactTracingOntology:User ;
+                             ContactTracingOntology:hasRole ContactTracingOntology:Contact_Tracer ;
+                             ContactTracingOntology:userDisease ContactTracingOntology:COVID-19 ;
+                             ContactTracingOntology:userDomain ContactTracingOntology:Maryland ;
+                             ContactTracingOntology:userID "4444444"^^xsd:int .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#UserE
+ContactTracingOntology:UserE rdf:type owl:NamedIndividual ,
+                                      ContactTracingOntology:User ;
+                             ContactTracingOntology:hasRole ContactTracingOntology:Contact_Tracer ;
+                             ContactTracingOntology:userDisease ContactTracingOntology:COVID-19 ;
+                             ContactTracingOntology:userDomain ContactTracingOntology:Illinois ;
+                             ContactTracingOntology:userID "5555555"^^xsd:int .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#UserF
+ContactTracingOntology:UserF rdf:type owl:NamedIndividual ,
+                                      ContactTracingOntology:User ;
+                             ContactTracingOntology:hasRole ContactTracingOntology:Care_Coordinator ;
+                             ContactTracingOntology:userDisease ContactTracingOntology:COVID-19 ;
+                             ContactTracingOntology:userDomain ContactTracingOntology:Maryland ;
+                             ContactTracingOntology:userID "6666666"^^xsd:int .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#UserG
+ContactTracingOntology:UserG rdf:type owl:NamedIndividual ,
+                                      ContactTracingOntology:User ;
+                             ContactTracingOntology:hasRole ContactTracingOntology:Outbreak_Investigator ;
+                             ContactTracingOntology:userDisease ContactTracingOntology:COVID-19 ,
+                                                                ContactTracingOntology:Tuberculosis ;
+                             ContactTracingOntology:userDomain ContactTracingOntology:Maryland ;
+                             ContactTracingOntology:userID "7777777"^^xsd:int .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#UserH
+ContactTracingOntology:UserH rdf:type owl:NamedIndividual ,
+                                      ContactTracingOntology:User ;
+                             ContactTracingOntology:hasRole ContactTracingOntology:Business_Representative ;
+                             ContactTracingOntology:represents ContactTracingOntology:Place3a ;
+                             ContactTracingOntology:userID "88888888"^^xsd:int .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#UserI
+ContactTracingOntology:UserI rdf:type owl:NamedIndividual ,
+                                      ContactTracingOntology:User ;
+                             ContactTracingOntology:hasRole ContactTracingOntology:Business_Representative ;
+                             ContactTracingOntology:represents ContactTracingOntology:Place5a ;
+                             ContactTracingOntology:userID "99999999"^^xsd:int .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Visit1a
+ContactTracingOntology:Visit1a rdf:type owl:NamedIndividual ,
+                                        ContactTracingOntology:Visit ;
+                               ContactTracingOntology:diseaseExposure ContactTracingOntology:COVID-19 ;
+                               ContactTracingOntology:visitedBy ContactTracingOntology:Person1a ,
+                                                                ContactTracingOntology:Person2a ,
+                                                                ContactTracingOntology:Person3a ;
+                               ContactTracingOntology:visitedPlace ContactTracingOntology:Place4a ;
+                               ContactTracingOntology:description "Black Widow: Theater 2"^^xsd:string ,
+                                                                  "Screening of Black Widow at 8:00pm at AMC Maryland"^^xsd:string ;
+                               ContactTracingOntology:visitEndTime "2021-07-03T22:30:00"^^xsd:dateTime ;
+                               ContactTracingOntology:visitStartTime "2021-07-03T20:00:00"^^xsd:dateTime .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Visit2a
+ContactTracingOntology:Visit2a rdf:type owl:NamedIndividual ,
+                                        ContactTracingOntology:Visit ;
+                               ContactTracingOntology:coordinator ContactTracingOntology:Place2a ;
+                               ContactTracingOntology:visitedBy ContactTracingOntology:Person1a ;
+                               ContactTracingOntology:visitedPlace ContactTracingOntology:Place2a ;
+                               ContactTracingOntology:description "Can continue contact tracing with Bob's employee records"^^xsd:string ,
+                                                                  "Exposure risk primarily for those working or linering in the checkout lane"^^xsd:string ;
+                               ContactTracingOntology:isJobRelated "true"^^xsd:boolean ;
+                               ContactTracingOntology:visitEndTime "2021-07-04T15:00:00"^^xsd:dateTime ;
+                               ContactTracingOntology:visitStartTime "2021-07-04T09:00:00"^^xsd:dateTime .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Visit3a
+ContactTracingOntology:Visit3a rdf:type owl:NamedIndividual ,
+                                        ContactTracingOntology:Regular_Visit ,
+                                        ContactTracingOntology:Visit ;
+                               ContactTracingOntology:coordinator ContactTracingOntology:Place5a ;
+                               ContactTracingOntology:visitRoster ContactTracingOntology:Maryland_High_School_Roster ;
+                               ContactTracingOntology:visitedBy ContactTracingOntology:Person1a ;
+                               ContactTracingOntology:visitedPlace ContactTracingOntology:Place5a ;
+                               ContactTracingOntology:complete "true"^^xsd:boolean ;
+                               ContactTracingOntology:description "The regular visit to Maryland Summer School"^^xsd:string ,
+                                                                  "tagged as complete since no new contacts can be unearthed from this visit"^^xsd:string ;
+                               ContactTracingOntology:eventID "000000001"^^xsd:int .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Visit4a
+ContactTracingOntology:Visit4a rdf:type owl:NamedIndividual ,
+                                        ContactTracingOntology:Regular_Visit ,
+                                        ContactTracingOntology:Visit ;
+                               ContactTracingOntology:diseaseExposure ContactTracingOntology:COVID-19 ;
+                               ContactTracingOntology:subVisit ContactTracingOntology:Visit3a ;
+                               ContactTracingOntology:visitRoster <http://www.semanticweb.org/ContactTracingOntology#Mr._Green's_Biology_Roster> ;
+                               ContactTracingOntology:visitedBy ContactTracingOntology:Person1a ;
+                               ContactTracingOntology:visitedPlace ContactTracingOntology:Place6a ;
+                               ContactTracingOntology:description "Mr. Green's Summer School Biology Class: Introductory Biology"^^xsd:string ;
+                               ContactTracingOntology:eventID "000000002"^^xsd:int .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#confined
+ContactTracingOntology:confined rdf:type owl:NamedIndividual ,
+                                         ContactTracingOntology:Ambiance .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#inside
+ContactTracingOntology:inside rdf:type owl:NamedIndividual ,
+                                       ContactTracingOntology:Ambiance .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#large
+ContactTracingOntology:large rdf:type owl:NamedIndividual ,
+                                      ContactTracingOntology:Ambiance .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#no_smell
+ContactTracingOntology:no_smell rdf:type owl:NamedIndividual ,
+                                         ContactTracingOntology:Symptom .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#no_taste
+ContactTracingOntology:no_taste rdf:type owl:NamedIndividual ,
+                                         ContactTracingOntology:Symptom .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#outside
+ContactTracingOntology:outside rdf:type owl:NamedIndividual ,
+                                        ContactTracingOntology:Ambiance .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#small
+ContactTracingOntology:small rdf:type owl:NamedIndividual ,
+                                      ContactTracingOntology:Ambiance .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#123-123-1234
+<http://www.semanticweb.org/ContactTracingOntology#123-123-1234> rdf:type owl:NamedIndividual ,
+                                                                          ContactTracingOntology:Phone_Number .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#123-222-2222
+<http://www.semanticweb.org/ContactTracingOntology#123-222-2222> rdf:type owl:NamedIndividual ,
+                                                                          ContactTracingOntology:Phone_Number .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#123-357-2468
+<http://www.semanticweb.org/ContactTracingOntology#123-357-2468> rdf:type owl:NamedIndividual ,
+                                                                          ContactTracingOntology:Phone_Number .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#123-444-5656
+<http://www.semanticweb.org/ContactTracingOntology#123-444-5656> rdf:type owl:NamedIndividual ,
+                                                                          ContactTracingOntology:Phone_Number .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#123-456-7890
+<http://www.semanticweb.org/ContactTracingOntology#123-456-7890> rdf:type owl:NamedIndividual ,
+                                                                          ContactTracingOntology:Phone_Number .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#123_Main_St.,_Maryland,_USA
+<http://www.semanticweb.org/ContactTracingOntology#123_Main_St.,_Maryland,_USA> rdf:type owl:NamedIndividual ,
+                                                                                         ContactTracingOntology:Address ;
+                                                                                ContactTracingOntology:in ContactTracingOntology:Maryland .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#222_School_St.,_Maryland,_USA
+<http://www.semanticweb.org/ContactTracingOntology#222_School_St.,_Maryland,_USA> rdf:type owl:NamedIndividual ,
+                                                                                           ContactTracingOntology:Address ;
+                                                                                  ContactTracingOntology:in ContactTracingOntology:Maryland .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#54_West_St.,_Maryland,_USA
+<http://www.semanticweb.org/ContactTracingOntology#54_West_St.,_Maryland,_USA> rdf:type owl:NamedIndividual ,
+                                                                                        ContactTracingOntology:Address ;
+                                                                               ContactTracingOntology:in ContactTracingOntology:Maryland .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#67_East_Ave.,_Maryland,_USA
+<http://www.semanticweb.org/ContactTracingOntology#67_East_Ave.,_Maryland,_USA> rdf:type owl:NamedIndividual ,
+                                                                                         ContactTracingOntology:Address ;
+                                                                                ContactTracingOntology:in ContactTracingOntology:Maryland .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Bob's_Employee_Records
+<http://www.semanticweb.org/ContactTracingOntology#Bob's_Employee_Records> rdf:type owl:NamedIndividual ,
+                                                                                    ContactTracingOntology:Data ;
+                                                                           ContactTracingOntology:dataType ContactTracingOntology:Employee_Records .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Bob's_Employee_Schedule
+<http://www.semanticweb.org/ContactTracingOntology#Bob's_Employee_Schedule> rdf:type owl:NamedIndividual ,
+                                                                                     ContactTracingOntology:Data .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Bob's_Transaction_Data
+<http://www.semanticweb.org/ContactTracingOntology#Bob's_Transaction_Data> rdf:type owl:NamedIndividual ,
+                                                                                    ContactTracingOntology:Data ;
+                                                                           ContactTracingOntology:dataType ContactTracingOntology:Transaction_Data .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Cashier:_Bob's_Grocery_Store
+<http://www.semanticweb.org/ContactTracingOntology#Cashier:_Bob's_Grocery_Store> rdf:type owl:NamedIndividual ,
+                                                                                          ContactTracingOntology:Job ;
+                                                                                 ContactTracingOntology:hasEmployer ContactTracingOntology:Place2a .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Mr._Green's_Biology_Roster
+<http://www.semanticweb.org/ContactTracingOntology#Mr._Green's_Biology_Roster> rdf:type owl:NamedIndividual ,
+                                                                                        ContactTracingOntology:Data ;
+                                                                               ContactTracingOntology:dataType ContactTracingOntology:Educational_Records ,
+                                                                                                               ContactTracingOntology:Roster .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Weekdays,_2-6pm
+<http://www.semanticweb.org/ContactTracingOntology#Weekdays,_2-6pm> rdf:type owl:NamedIndividual ,
+                                                                             ContactTracingOntology:Availability .
+
+
+###  http://www.semanticweb.org/ContactTracingOntology#Weekends,_10am-3pm
+<http://www.semanticweb.org/ContactTracingOntology#Weekends,_10am-3pm> rdf:type owl:NamedIndividual ,
+                                                                                ContactTracingOntology:Availability .
+
+
+#################################################################
+#    Annotations
+#################################################################
+
+owl:topDataProperty rdfs:comment "Need to make sure I'm using these right." ,
+                                 "Should counts be stored by Datatype Properties?" .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi
