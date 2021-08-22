@@ -16,9 +16,9 @@ grocery4.ttl - grocery store/employee data
 school4.ttl - school data
 movie4.ttl - movie theater/social data
 blankOntology.owl - the blank Contact Tracing Ontology (with all classes/properties but no individual instances)
-Queries.ppt - A power point presentation containing 5 sample queries and the results they should return given these datasets. 
+Queries - A pdf power point presentation containing 5 sample queries and the results they should return given these datasets. 
   -Query 1 is associated with public health data only
   -Query 2 is associated with public health data and grocery store data
   -Query 3 is associated with public health data and school data
   -Queries 4 & 5 are associated with public health data and movie data
- Query Reasoning.ppt - A power point presentation providing information about what each query's situation aware access control is
+ Query Reasoning - A power point presentation providing information about what each query's situation aware access control is
