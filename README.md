@@ -8,7 +8,7 @@ To run the sample queries:
 3) Configure Apache Jena Fuseki to use the OWL Mircoreasoner to implement logic: https://jena.apache.org/documentation/inference/index.html
 4) Launch Apache Jena Fuseki with the command fuseki-server --update --mem /ds - the server will be located at localhost:3030
 5) Upload the desired datasets to the proper machines (192.168.100.4 should have the public health dataset, 192.168.100.5 should have the other datasets)
-6) Copy/paste the queries from the ppt. into the engine and run. (Queries 1-4 should be run from 192.168.100.4, query 5 should be run from 192.168.100.5). Be sure to replace <PREFIXES> with the prefixes provided.
+6) Copy/paste the queries from the ppt. into the engine and run. (Queries 1-4 should be run from 192.168.100.4, query 5 should be run from 192.168.100.5). Be sure to replace PREFIXES with the prefixes provided.
 
 Files:
 alice5.ttl - public health data
